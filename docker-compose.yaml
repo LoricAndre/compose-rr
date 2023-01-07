@@ -25,6 +25,7 @@ services:
       - ${TV_VOL-$DL_VOL/tv}:/tv:rw
       - ${MOVIES_VOL-$DL_VOL/movies}:/movies:rw
     network_mode: "service:vpn"
+    # ports: [8090:8090]
   jackett:
     image: linuxserver/jackett
     container_name: jackett
@@ -33,6 +34,7 @@ services:
     volumes:
       - ${CONFIG_VOL}/jackett:/config:rw
     network_mode: "service:vpn"
+    # ports: [9117:9117]
   flaresolverr:
     image: flaresolverr/flaresolverr
     container_name: flaresolverr
@@ -47,9 +49,10 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${CONFIG_VOL}/sonarr:/config:rw
-      # - ${SEEDING_VOL-${DL_VOL}/seeding}:/downloads:rw
+      - ${SEEDING_VOL-$DL_VOL/seeding}:/downloads:rw
       - ${TV_VOL-$DL_VOL/tv}:/tv:rw
     network_mode: "service:vpn"
+    # ports: [8989:8989]
   radarr:
     image: linuxserver/radarr
     container_name: radarr
@@ -58,9 +61,10 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${CONFIG_VOL}/radarr:/config:rw
-      # - ${SEEDING_VOL-${DL_VOL}/seeding}:/downloads:rw
+      - ${SEEDING_VOL-$DL_VOL/seeding}:/downloads:rw
       - ${MOVIES_VOL-$DL_VOL/movies}:/movies:rw
     network_mode: "service:vpn"
+    # ports: [7878:7878]
   jellyfin:
     image: linuxserver/jellyfin
     container_name: jellyfin
@@ -71,6 +75,7 @@ services:
       - ${TV_VOL-$DL_VOL/tv}:/data/tvshows:rw
       - ${MOVIES_VOL-$DL_VOL/movies}:/data/movies:rw
     network_mode: "service:vpn"
+    # ports: [8080:8080]
   jellyseerr:
     image: fallenbagel/jellyseerr
     container_name: jellyseerr
@@ -81,3 +86,4 @@ services:
     depends_on:
       - jellyfin
     network_mode: "service:vpn"
+    # ports: [5055:5055]
