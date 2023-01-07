@@ -1,0 +1,83 @@
+version: "3"
+services:
+  vpn:
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    env_file: vpn.env
+    ports:
+      - 8090:8090  # qbittorrent
+      - 9117:9117  # jackett
+      - 8989:8989  # sonarr
+      - 7878:7878  # radarr
+      - 8080:8080  # jellyfin
+      - 5055:5055  # jellyseerr
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    restart: unless-stopped
+    env_file: qbittorrent.env
+    environment:
+      - WEBUI_PORT=8090
+    volumes:
+      - ${CONFIG_VOL}/qbittorrent:/config:rw
+      - ${SEEDING_VOL-$DL_VOL/seeding}:/downloads:rw
+      - ${TV_VOL-$DL_VOL/tv}:/tv:rw
+      - ${MOVIES_VOL-$DL_VOL/movies}:/movies:rw
+    network_mode: "service:vpn"
+  jackett:
+    image: linuxserver/jackett
+    container_name: jackett
+    env_file: jackett.env
+    restart: unless-stopped
+    volumes:
+      - ${CONFIG_VOL}/jackett:/config:rw
+    network_mode: "service:vpn"
+  flaresolverr:
+    image: flaresolverr/flaresolverr
+    container_name: flaresolverr
+    env_file: flaresolverr.env
+    restart: unless-stopped
+    network_mode: "service:vpn"
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    restart: unless-stopped
+    env_file: sonarr.env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONFIG_VOL}/sonarr:/config:rw
+      # - ${SEEDING_VOL-${DL_VOL}/seeding}:/downloads:rw
+      - ${TV_VOL-$DL_VOL/tv}:/tv:rw
+    network_mode: "service:vpn"
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    restart: unless-stopped
+    env_file: radarr.env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONFIG_VOL}/radarr:/config:rw
+      # - ${SEEDING_VOL-${DL_VOL}/seeding}:/downloads:rw
+      - ${MOVIES_VOL-$DL_VOL/movies}:/movies:rw
+    network_mode: "service:vpn"
+  jellyfin:
+    image: linuxserver/jellyfin
+    container_name: jellyfin
+    restart: unless-stopped
+    env_file: jellyfin.env
+    volumes:
+      - ${CONFIG_VOL}/jellyfin:/config:rw
+      - ${TV_VOL-$DL_VOL/tv}:/data/tvshows:rw
+      - ${MOVIES_VOL-$DL_VOL/movies}:/data/movies:rw
+    network_mode: "service:vpn"
+  jellyseerr:
+    image: fallenbagel/jellyseerr
+    container_name: jellyseerr
+    restart: unless-stopped
+    env_file: jellyseer.env
+    volumes:
+      - ${CONFIG_VOL}/jellyseerr:/app/config:rw
+    depends_on:
+      - jellyfin
+    network_mode: "service:vpn"
