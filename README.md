@@ -37,4 +37,11 @@ I would recommend using a VPN to avoid issues, such as with your ISP. However, i
 To disable it, simply run `make vpn.disable` then `make up` to start the services again (they will be automatically stopped beforehand). You can then enable it again using `make vpn.enable`.
 
 ## Adding services
-TODO
+
+Adding a service requires 3 things :
+
+- Adding the service itself in the docker-compose file
+- Adding the port to the VPN service
+- Adding the service name to the list of services in the Makefile
+
+Configuration is then intended through env files, specifically `<service>.env`
