@@ -6,26 +6,37 @@ services:
       - NET_ADMIN
     env_file: vpn.env
     ports:
-      - 8090:8090  # qbittorrent
+      - 8000:8000  # homer
+      - 8080:8080  # qbittorrent
       - 9117:9117  # jackett
       - 8989:8989  # sonarr
       - 7878:7878  # radarr
-      - 8080:8080  # jellyfin
+      - 8096:8096  # jellyfin
+      - 1900:1900  # jellyfin dlna
       - 5055:5055  # jellyseerr
+  homer:
+    image: b4bz/homer
+    container_name: homer
+    env_file: homer.env
+    environment:
+      - PORT=8000
+    volumes:
+      - ${CONFIG_VOL}/homer:/www/assets
+    user: ${PUID}:${PGID}
+    network_mode: "service:vpn"
+    # ports: [8000:8000]
   qbittorrent:
     image: linuxserver/qbittorrent
     container_name: qbittorrent
     restart: unless-stopped
     env_file: qbittorrent.env
-    environment:
-      - WEBUI_PORT=8090
     volumes:
       - ${CONFIG_VOL}/qbittorrent:/config:rw
       - ${SEEDING_VOL-$DL_VOL/seeding}:/downloads:rw
       - ${TV_VOL-$DL_VOL/tv}:/tv:rw
       - ${MOVIES_VOL-$DL_VOL/movies}:/movies:rw
     network_mode: "service:vpn"
-    # ports: [8090:8090]
+    # ports: [8080:8080]
   jackett:
     image: linuxserver/jackett
     container_name: jackett
@@ -75,7 +86,7 @@ services:
       - ${TV_VOL-$DL_VOL/tv}:/data/tvshows:rw
       - ${MOVIES_VOL-$DL_VOL/movies}:/data/movies:rw
     network_mode: "service:vpn"
-    # ports: [8080:8080]
+    # ports: [8096:8096]
   jellyseerr:
     image: fallenbagel/jellyseerr
     container_name: jellyseerr

@@ -30,6 +30,17 @@ SERVER_COUNTRIES=Netherland
 3. Run `make up` (or `docker-compose up`) to spin up the services.
 4. The services can then be managed using `docker-compose` normally.
 
+## Configuration
+
+The services configuration will change depending on whether or not he VPN is used :
+
+- With the VPN, all services are internally available through `localhost`
+- Without the VPN, you need to set them up using the name of the services as host
+
+### API Keys
+
+You can run `make <service>.api-key` to retrieve api keys for ` *rr` services. For instance, the Radarr API Key is obtainable through `make radarr.api-key`.
+
 ## Usage without a VPN
 
 I would recommend using a VPN to avoid issues, such as with your ISP. However, it is possible to use this without a VPN.
@@ -38,10 +49,11 @@ To disable it, simply run `make vpn.disable` then `make up` to start the service
 
 ## Adding services
 
-Adding a service requires 3 things :
+Adding a service requires a few modifications :
 
 - Adding the service itself in the docker-compose file
 - Adding the port to the VPN service
 - Adding the service name to the list of services in the Makefile
+- Creating the corresponding `service.env` file (this is done automatically by `make .env` but if the `.env` file already exists this won't work)
 
 Configuration is then intended through env files, specifically `<service>.env`

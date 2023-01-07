@@ -1,17 +1,19 @@
 include .env
 
-SERVICES := jellyfin qbittorrent radarr jellyseerr jackett sonarr flaresolverr
+SERVICES := jellyfin qbittorrent radarr jellyseerr jackett sonarr flaresolverr homer
 ifeq ($(DISABLE_VPN), false)
 	SERVICES += vpn
 endif
 
-.PHONY: up down vpn.*
+.PHONY: up down vpn.* permissions api-keys
 
-up: docker-compose.yaml .env
+up: docker-compose.yaml .env permissions
 	docker-compose up -d --remove-orphans $(SERVICES)
 
 down:
 	docker-compose down
+
+restart: down up
 
 .ONESHELL:
 .env: .env.example
@@ -37,3 +39,10 @@ vpn.enable: down
 	sed -i 's/^    # network_mode: "service:vpn"$$/    network_mode: "service:vpn"/' docker-compose.yaml
 	sed -i 's/^    ports: \[/    # ports: [/' docker-compose.yaml
 	sed -i 's/DISABLE_VPN=true/DISABLE_VPN=false/' .env
+
+permissions:
+	sudo chmod 777 config -R
+	sudo chmod 777 downloads -R
+
+%.api-key:
+	@sed -n 's/<ApiKey>\(.*\)<\/ApiKey>/\1/p' config/$*/config.xml
