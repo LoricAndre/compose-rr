@@ -1,12 +1,12 @@
 version: "3"
 services:
   vpn:
-    image: qmcgaw/gluetun
+    image: qmcgaw/gluetun:v3
     cap_add:
       - NET_ADMIN
     env_file: vpn.env
     ports:
-      - 8000:8000  # homer
+      - 8008:8008  # homer
       - 8080:8080  # qbittorrent
       - 9117:9117  # jackett
       - 8989:8989  # sonarr
@@ -19,12 +19,12 @@ services:
     container_name: homer
     env_file: homer.env
     environment:
-      - PORT=8000
+      - PORT=8008
     volumes:
       - ${CONFIG_VOL}/homer:/www/assets
     user: ${PUID}:${PGID}
     network_mode: "service:vpn"
-    # ports: [8000:8000]
+    # ports: [8008:8008]
   qbittorrent:
     image: linuxserver/qbittorrent
     container_name: qbittorrent

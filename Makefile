@@ -7,7 +7,7 @@ endif
 
 .PHONY: up down vpn.* permissions api-keys
 
-up: docker-compose.yaml .env permissions
+up: docker-compose.yaml .env
 	docker-compose up -d --remove-orphans $(SERVICES)
 
 down:
@@ -43,6 +43,9 @@ vpn.enable: down
 permissions:
 	sudo chmod 777 config -R
 	sudo chmod 777 downloads -R
+
+jackett.api-key:
+	@sed -n 's/.*APIKey": *"\(.*\)".*/\1/p' config/jackett/Jackett/ServerConfig.json
 
 %.api-key:
 	@sed -n 's/<ApiKey>\(.*\)<\/ApiKey>/\1/p' config/$*/config.xml

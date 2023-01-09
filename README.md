@@ -39,7 +39,7 @@ The services configuration will change depending on whether or not he VPN is use
 
 ### API Keys
 
-You can run `make <service>.api-key` to retrieve api keys for ` *rr` services. For instance, the Radarr API Key is obtainable through `make radarr.api-key`.
+You can run `make <service>.api-key` to retrieve api keys for ` *rr` services and Jackett. For instance, the Radarr API Key is obtainable through `make radarr.api-key`.
 
 ## Usage without a VPN
 
